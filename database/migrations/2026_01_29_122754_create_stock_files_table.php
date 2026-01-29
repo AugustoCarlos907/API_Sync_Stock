@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('file_path');
             $table->enum('status', ['received', 'processing' , 'extracted' , 'failed']);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

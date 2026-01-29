@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('sku');
             $table->decimal('price', 10, 2);
             $table->enum('active', ['1', '0']);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
