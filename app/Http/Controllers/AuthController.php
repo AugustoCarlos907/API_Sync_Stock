@@ -18,12 +18,20 @@ class AuthController extends Controller
               return response()->json(['message' => 'Invalid credentials'], 401);
          }
 
+        $user = Auth::user();
+        $company = $user->company;
+
+        if(!$company){
+            return response()->json(['message' => 'No company associated with this user'], 404);
+        }
+        
+        $company->load('user');
+
         $token = Auth::user()->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => Auth::user()
+            'data' => $company
         ], 200);
     }
 }

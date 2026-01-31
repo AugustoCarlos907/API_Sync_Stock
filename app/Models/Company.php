@@ -22,4 +22,8 @@ class Company extends Model
     public function stock_files(){
         return $this->hasMany(StockFile::class);
     }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }
