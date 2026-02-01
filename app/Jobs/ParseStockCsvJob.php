@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\StockFile;
 use App\Models\StockItem;
+use App\Services\AlertService;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -163,6 +164,10 @@ class ParseStockCsvJob implements ShouldQueue
                 'processed_at' => now(),
             ]);
 
+
+            app(AlertService::class)->checkLowPriceItems();
+
+            
             \Log::info("Processamento concluído com sucesso para arquivo ID: " . $this->stockFile->id);
 
         } catch (\Exception $e) {
