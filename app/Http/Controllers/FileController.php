@@ -2,44 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFileRequest;
+use App\Jobs\ParseStockCsvJob;
+use App\Models\StockFile;
 use App\Services\FileService;
+use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 
 class FileController extends Controller
 {
     public function __construct(
-        public FileService $service
+        public FileService $service,
     ){}
 
-    public function uploadFile(Request $request){
-        
-        $request->validate([
-            'file' => 'required|file|mimes:csv,txt|max:2048',
-        ]);
+
+    public function index(){
+        $companyId = auth()->user()->id;
+        $files = $this->service->getAllFiles($companyId);
+
+        return response()->json([
+            'files' => $files
+        ], 200);
+
+        if(!$files || $files->isEmpty()){
+            return response()->json([
+                'message' => 'No files found'
+            ], 404);
+        }
+
+
+    }
+
+    public function uploadFile(StoreFileRequest $request){
+        $request->validated();
 
         if($request->hasFile('file')){
-            $file = $request->file('file');
-            $filename = uniqid().'_'.$file->getClientOriginalName();
-            $file->move(public_path('uploads'), $filename);
-            $filePath = public_path('uploads').'/'.$filename;
+            $file = $request->file('file')->store('uploads');
+            $relativePath = $file;
+            $filename =  $request->file('file')->getClientOriginalName();
 
-            $companyId = auth()->user()->company_id;
+            $companyId = Auth::user()->id;
 
-            $this->service->saveFile([
-                'file_path' => $filePath,
+            $stockFile = $this->service->saveFile([
+                'file_path' => $relativePath, 
                 'file_name' => $filename,
-                'company_id' => $companyId
+                'company_id' => $companyId,
             ]);
+
+            ParseStockCsvJob::dispatch($stockFile);
 
             return response()->json([
                 'message' => 'File uploaded successfully',
-                'file_path' => $filePath
+                'file_path' => $relativePath,
             ], 201);
         } else {
             return response()->json([
                 'message' => 'No file uploaded'
             ], 400);
         }
-
     }
 }

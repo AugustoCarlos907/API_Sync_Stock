@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('stock_files', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id');
+            
+            $table->foreignId('company_id')
+            ->constrained('companies')
+            ->cascadeOnDelete();
+            
             $table->string('file_name');
             $table->string('file_path');
             $table->enum('status', ['received', 'processing' , 'extracted' , 'failed'])->default('received');

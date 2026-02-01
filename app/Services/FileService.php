@@ -9,6 +9,11 @@ class FileService{
         public FileInterface $repository
         ){}
 
+    public function getAllFiles($companyId){
+        return $this->repository->getAllFiles($companyId);
+    }
+    
+
     public function saveFile( $data = []){
 
         return $this->repository->saveFile($data);

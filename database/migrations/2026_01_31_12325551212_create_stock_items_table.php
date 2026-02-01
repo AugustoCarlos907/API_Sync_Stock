@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('stock_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stock_file_id')->constrained('stock_files')->onDelete('cascade');
-            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
+            
+            $table->foreignId('stock_file_id')
+                ->constrained('stock_files')
+                ->cascadeOnDelete();
+
+            $table->foreignId('company_id')
+                ->constrained('companies')
+                ->cascadeOnDelete();
+
             $table->string('item_name');
             $table->integer('quantity');
             $table->string('sku');
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 10, 2)->nullable();
             $table->enum('active', ['1', '0']);
             $table->softDeletes();
             $table->timestamps();

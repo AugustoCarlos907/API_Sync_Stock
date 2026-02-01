@@ -7,13 +7,12 @@ use App\Repositories\Interfaces\CompanyInterface;
 
 class CompanyService
 {
-    protected $repository;
-    public function __construct(CompanyInterface $repository){
-        $this->repository = $repository;
-    }
+    public function __construct(
+        public CompanyInterface $repository
+    ){}
 
-    public function getAllCompanies(): mixed{
-        return $this->repository->getAllCompanies();
+    public function getAllCompanies($companies = []): mixed{
+        return $this->repository->getAllCompanies($companies);
     }
 
     public function getCompanyById($id): mixed
@@ -21,10 +20,6 @@ class CompanyService
         return $this->repository->getCompanyById($id);
     }
 
-    public function createCompany(array $data): mixed
-    {
-        return $this->repository->createCompany($data);
-    }
 
     public function updateCompany($id, array $data): mixed
     {

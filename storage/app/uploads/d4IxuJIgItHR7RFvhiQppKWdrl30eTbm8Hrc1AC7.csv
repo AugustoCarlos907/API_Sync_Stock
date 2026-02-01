@@ -1,0 +1,6 @@
+sku,name,quantity,price,active
+ABC123,Produto Teste 1,10,99.9,1
+DEF456,Produto Teste 2,5,49.5,0
+GHI789,Produto Teste 3,20,10.0,1
+MED-004,Vitamína C 1000mg,200,180.75,1
+MED-005,Xarope para Tosse,0,900.0,0
