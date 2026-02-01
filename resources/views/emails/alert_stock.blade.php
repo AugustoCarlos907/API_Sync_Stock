@@ -1,0 +1,1 @@
+<h1>Stock Alert: {{ $stockItem->item_name }}</h1>

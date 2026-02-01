@@ -25,8 +25,8 @@ Route::middleware(['auth:sanctum' , 'throttle:60,1'])->group(function(){
     Route::get('/stock/items', [StockItemController::class, 'index']);
 
     //stock alerts
-    Route::get('/stock/alerts', [AlertItemController::class, 'getAlertItems']);
-    Route::post('/stock/alerts', [AlertItemController::class, 'sendStockAlerts']);
+    Route::get('/stock/alerts',  [AlertItemController::class, 'getAlertItems']);
+    Route::post('/stock/alerts/items/{id}', [AlertItemController::class, 'sendStockAlerts']);
 
    });
 
