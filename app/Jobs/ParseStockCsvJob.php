@@ -39,7 +39,6 @@ class ParseStockCsvJob implements ShouldQueue
                 SplFileObject::DROP_NEW_LINE
             );
 
-            // Cabeçalho esperado
             $expectedHeader = ['sku', 'name', 'quantity', 'price', 'active'];
 
             // Lê o cabeçalho
@@ -50,10 +49,8 @@ class ParseStockCsvJob implements ShouldQueue
             }
 
             $header = array_map('trim', $header);
-            // Remove BOM se existir
             $header[0] = preg_replace('/^\xEF\xBB\xBF/', '', $header[0]);
 
-            // Verifica se o header tem o número correto de colunas
             if (count($header) !== count($expectedHeader)) {
                 throw new Exception('CSV com número de colunas inválido. Esperado: ' . 
                     count($expectedHeader) . ', Recebido: ' . count($header));
@@ -81,24 +78,20 @@ class ParseStockCsvJob implements ShouldQueue
                     continue;
                 }
                 
-                // Se a linha for o cabeçalho repetido, pular
                 if (count($row) > 0 && in_array(trim($row[0]), ['sku', 'SKU'])) {
                     continue;
                 }
                 
-                // Filtrar valores nulos e strings vazias
                 $row = array_map(function($value) {
                     return $value === '' ? null : $value;
                 }, $row);
                 
-                // Se após filtrar estiver vazio, pular
                 if (empty(array_filter($row, function($value) {
                     return $value !== null;
                 }))) {
                     continue;
                 }
                 
-                // Se tiver menos de 5 colunas, pode ser uma linha incompleta
                 if (count($row) < 5) {
                     continue;
                 }
@@ -116,7 +109,6 @@ class ParseStockCsvJob implements ShouldQueue
                 }
 
                 // Validação de preço - não pode ser null/empty
-                // Se o preço for inválido, definir um valor padrão (0.00)
                 if ($price === null || $price === '' || !is_numeric($price)) {
                     $price = '0.00';
                 }
@@ -145,7 +137,6 @@ class ParseStockCsvJob implements ShouldQueue
                     }
                 }
                 
-                // Inserir em chunks
                 collect($rows)->chunk(500)->each(function($chunk) {
                     try {
                         StockItem::insert($chunk->toArray());
