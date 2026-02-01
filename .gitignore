@@ -22,3 +22,4 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/opt/lampp/htdocs/API_Sync_Stock/storage/logs/*.log
